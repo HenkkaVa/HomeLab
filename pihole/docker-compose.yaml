@@ -8,9 +8,9 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       # Default HTTP Port
-      - "80:80/tcp"
+      # - "80:80/tcp"
       # Default HTTPs Port. FTL will generate a self-signed certificate
-      - "443:443/tcp"
+      # - "443:443/tcp"
       # Uncomment the below if using Pi-hole as your DHCP Server
       #- "67:67/udp"
       # Uncomment the line below if you are using Pi-hole as your NTP server
@@ -23,10 +23,39 @@ services:
       FTLCONF_webserver_api_password: ${ADMIN_PASSWORD}
       # Add default upstream servers
       FTLCONF_dns_upstreams: '8.8.8.8;8.8.4.4'
+      # Set custom DNS records to enable access with Traefik
+      FTLCONF_dns_hosts: |-
+        192.168.1.99 beast.local
+      #Custom CNAME
+      FTLCONF_dns_cnameRecords: |-
+        pihole.${SUBDOMAIN}.${DOMAIN},beast.local
+        traefik-dashboard.${SUBDOMAIN}.${DOMAIN},beast.local
       # If using Docker's default `bridge` network setting the dns listening mode should be set to 'ALL'
       FTLCONF_dns_listeningMode: 'ALL'
       # Add the host machine's IP for access
       FTLCONF_LOCAL_IPV4: '192.168.1.99'
+    labels:
+    # Setup web GUI behind Traefik (from https://discourse.pi-hole.net/t/pihole-v6-webgui-behind-traefik/77276/12)
+      - traefik.enable=true
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+      - traefik.http.services.pihole.loadbalancer.passHostHeader=true
+      # Main router for all paths except "/"
+      - traefik.http.routers.pihole.rule=Host(`pihole.${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.pihole.entrypoints=https   #=websecure
+      - traefik.http.routers.pihole.tls=true
+      # - traefik.http.routers.pihole.tls.certresolver=myresolver
+      - traefik.http.routers.pihole.service=pihole
+      # Root router to rewrite "/" to "/admin/"
+      - traefik.http.routers.pihole-root.rule=Host(`pihole.${SUBDOMAIN}.${DOMAIN}`) && Path(`/`)
+      - traefik.http.routers.pihole-root.entrypoints=https  #=websecure
+      - traefik.http.routers.pihole-root.tls=true
+      # - traefik.http.routers.pihole-root.tls.certresolver=myresolver
+      - traefik.http.routers.pihole-root.service=pihole
+      - traefik.http.routers.pihole-root.middlewares=pihole-root-rewrite
+      # Middleware rewriting root to /admin/
+      - traefik.http.middlewares.pihole-root-rewrite.replacePath.path=/admin/
+    networks:
+      - proxy
     # Volumes store your data between container upgrades
     volumes:
       # For persisting Pi-hole's databases and common configuration file
@@ -42,3 +71,7 @@ services:
       # Optional, if Pi-hole should get some more processing time
       # - SYS_NICE
     restart: unless-stopped
+
+networks:
+  proxy:
+    external: true
