@@ -1,0 +1,309 @@
+{
+  "updatedAt": "2026-02-21T18:07:11.594Z",
+  "createdAt": "2026-02-21T17:43:44.424Z",
+  "id": "8scqKTDjijXUTq5o",
+  "name": "Job Scaper",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8ce07ee6-5092-4d38-b6d5-804cecaed213",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "hKByXkMQaC5Qt9UMN",
+          "mode": "list",
+          "cachedResultName": "Linkedin Jobs Scraper - PPR (curious_coder/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/hKByXkMQaC5Qt9UMN/input"
+        },
+        "customBody": "{\n    \"count\": 500,\n    \"scrapeCompany\": false,\n    \"urls\": [\n        \"https://www.linkedin.com/jobs/search/?distance=50&f_TPR=r120000&geoId=106591199&keywords=data%20engineer%20OR%20machine%20learning%20OR%20computer%20vision&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD\"\n    ]\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "bbcf7983-c77e-4a0a-aaed-0b3b468c407f",
+      "name": "Run an Actor and get dataset",
+      "retryOnFail": true,
+      "credentials": {
+        "apifyApi": {
+          "id": "2Ih4bPqF0cgeIdsH",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1OZ5cAhOeShwXrHJIs5jEy8K7B5DGGCVZ1xOag9uy0cw",
+          "mode": "list",
+          "cachedResultName": "Jobs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OZ5cAhOeShwXrHJIs5jEy8K7B5DGGCVZ1xOag9uy0cw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "All",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OZ5cAhOeShwXrHJIs5jEy8K7B5DGGCVZ1xOag9uy0cw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.id }}",
+            "Title": "={{ $json.title }}",
+            "Location": "={{ $json.location }}",
+            "Company": "={{ $json.companyName }}",
+            "Description": "={{ $json.descriptionText }}",
+            "URL": "={{ $json.link }}",
+            "Date posted": "={{ $json.postedAt }}",
+            "Apply URL": "={{ $json.applyUrl }}",
+            "Level": "={{ $json.seniorityLevel }}",
+            "Type": "={{ $json.employmentType }}",
+            "Description HTML": "={{ $json.descriptionHtml }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description HTML",
+              "displayName": "Description HTML",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date posted",
+              "displayName": "Date posted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apply URL",
+              "displayName": "Apply URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Applied",
+              "displayName": "Applied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Required work experience (AI)",
+              "displayName": "Required work experience (AI)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Top skills",
+              "displayName": "Top skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "8975d1c3-85d2-4907-8359-d995566116aa",
+      "name": "Append or update row in sheet",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "29Rz0mjE5fBaNOyJ",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f47da690-1100-40e0-868c-e356f192ad24",
+  "activeVersionId": "129f4ccd-0f1e-49b2-ba6b-ee1c9b75805a",
+  "versionCounter": 12,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-21T17:43:44.428Z",
+      "createdAt": "2026-02-21T17:43:44.428Z",
+      "role": "workflow:owner",
+      "workflowId": "8scqKTDjijXUTq5o",
+      "projectId": "HuVyKMJS0o2NnDU1",
+      "project": {
+        "updatedAt": "2026-02-21T17:42:00.552Z",
+        "createdAt": "2026-02-21T12:10:50.937Z",
+        "id": "HuVyKMJS0o2NnDU1",
+        "name": "Henri Välimäki <henri.valimaki@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "a87e1521-473c-4fb5-bb11-f3bde98ba630"
+      }
+    }
+  ]
+}
